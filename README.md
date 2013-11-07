@@ -13,7 +13,7 @@ In [BREACH site](http://breachattack.com/), the mitigrations against BREACH atta
 6. Length hiding (by adding random number of bytes to the responses)
 7. Rate-limiting the requests
 
-BREACH relys on HTTP compression and it's reasonable to disable it to secure your website. However without compresseion, some websites may meet severe performance degression or the cost may increase if you're charged based on the volume of traffic like AWS. In such case it may be difficult to turn off HTML compression for whole responses from your website and need to adopt other proper ways.
+BREACH relies on HTTP compression and it's reasonable to disable it to secure your website. However without compresseion, some websites may meet severe performance degression or the cost may increase if you're charged based on the volume of traffic like AWS. In such case it may be difficult to turn off HTML compression for whole responses from your website and need to adopt other proper ways.
 
 Other mitigrations listed from the 2nd to 5th above are basically applicable to your application but the 6th one, Length hiding, can be done on nginx. This filter module provides functionality to append randomly generated HTML comment to the end of response body to hide correct response length and make it difficult for attackers to guess secure token.
 
