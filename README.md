@@ -31,7 +31,7 @@ As said in breach-migration-rails, BREACH is complicated and wide-ranging attack
 
 ## Installation
 
-This filter module is tested with nginx 1.2.9 and nginx 1.4.2.
+This filter module is tested with nginx 1.2.9, 1.4.7 and 1.6.1.
 
 Download nginx sources from [http://nginx.org](http://nginx.org) and unpack it.
 
