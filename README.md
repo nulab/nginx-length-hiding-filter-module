@@ -79,3 +79,9 @@ server {
 }
 ```
 
+## Services using this module
+
+* [Cacoo](https://cacoo.com/)
+* [Backlog](https://backlogtool.com/)
+* [Typetalk](https://typetalk.in/)
+* [Nulab Account](https://apps.nulab-inc.com/)
