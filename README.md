@@ -31,7 +31,7 @@ As said in breach-migration-rails, BREACH is complicated and wide-ranging attack
 
 ## Installation
 
-This filter module is tested with nginx 1.2.9, 1.4.7, 1.6.1 and 1.9.12.
+This filter module is tested with nginx 1.2.9, 1.4.7, 1.6.1, 1.9.12 and 1.10.0.
 
 Download nginx sources from [http://nginx.org](http://nginx.org) and unpack it.
 
@@ -39,7 +39,11 @@ Run configure script with adding --add-module option with the directory where th
 ```
 ./configure --add-module=/path/to/nginx-length-hiding-filter-module
 ```
-Of course, you can add other options here. Then build and install.
+To compile this module as dynamic module available in 1.9.11 or later, use `--add-dynamic-module` instead
+```
+./configure --add-dynamic-module=/path/to/nginx-length-hiding-filter-module
+```
+You can add other options along with it. Then build and install.
 ```
 make
 sudo make install
