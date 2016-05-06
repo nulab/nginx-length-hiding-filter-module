@@ -83,6 +83,11 @@ server {
 }
 ```
 
+If this module is built as dynamic module, do NOT forget including `load_module` line in nginx configuration.
+```
+load_module modules/ngx_http_length_hiding_filter_module.so;
+```
+
 ## Services using this module
 
 * [Cacoo](https://cacoo.com/)
