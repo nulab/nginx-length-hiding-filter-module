@@ -6,30 +6,35 @@
 #include <ngx_core.h>
 #include <ngx_http.h>
 
+
 typedef struct {
     ngx_flag_t           enable;
     ngx_int_t            max;
     ngx_hash_t           types;
-    ngx_array_t          *types_keys;    
+    ngx_array_t          *types_keys;
 } ngx_http_length_hiding_conf_t;
 
 typedef struct {
     ngx_str_t            comment;
 } ngx_http_length_hiding_ctx_t;
 
+
 static void* ngx_http_length_hiding_create_conf(ngx_conf_t *cf);
-static char* ngx_http_length_hiding_merge_conf(ngx_conf_t *cf,void *parent, void *child);
+static char* ngx_http_length_hiding_merge_conf(ngx_conf_t *cf, void *parent,
+    void *child);
 static ngx_int_t ngx_http_length_hiding_filter_init(ngx_conf_t *cf);
 
-static ngx_int_t ngx_http_length_hiding_generate_random(ngx_http_request_t *r, ngx_http_length_hiding_ctx_t *ctx, ngx_http_length_hiding_conf_t *conf);
+static ngx_int_t ngx_http_length_hiding_generate_random(ngx_http_request_t *r,
+    ngx_http_length_hiding_ctx_t *ctx, ngx_http_length_hiding_conf_t *conf);
 
 static ngx_conf_num_bounds_t  ngx_http_length_hiding_max_bounds = {
     ngx_conf_check_num_bounds, 256, 2048
 };
 
+
 static ngx_command_t  ngx_http_length_hiding_filter_commands[] = {
     { ngx_string("length_hiding"),
-       NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_HTTP_LIF_CONF|NGX_CONF_FLAG,
+      NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_HTTP_LIF_CONF|NGX_CONF_FLAG,
       ngx_conf_set_flag_slot,
       NGX_HTTP_LOC_CONF_OFFSET,
       offsetof(ngx_http_length_hiding_conf_t, enable),
@@ -47,10 +52,11 @@ static ngx_command_t  ngx_http_length_hiding_filter_commands[] = {
       ngx_http_types_slot,
       NGX_HTTP_LOC_CONF_OFFSET,
       offsetof(ngx_http_length_hiding_conf_t, types_keys),
-      &ngx_http_html_default_types[0] },      
+      &ngx_http_html_default_types[0] },
 
       ngx_null_command
 };
+
 
 static ngx_http_module_t  ngx_http_length_hiding_filter_module_ctx = {
     NULL,                                         /* preconfiguration */
@@ -65,6 +71,7 @@ static ngx_http_module_t  ngx_http_length_hiding_filter_module_ctx = {
     ngx_http_length_hiding_create_conf,           /* create location configuration */
     ngx_http_length_hiding_merge_conf             /* merge location configuration */
 };
+
 
 ngx_module_t  ngx_http_length_hiding_filter_module = {
     NGX_MODULE_V1,
@@ -81,8 +88,10 @@ ngx_module_t  ngx_http_length_hiding_filter_module = {
     NGX_MODULE_V1_PADDING
 };
 
+
 static ngx_http_output_header_filter_pt  ngx_http_next_header_filter;
 static ngx_http_output_body_filter_pt    ngx_http_next_body_filter;
+
 
 static ngx_int_t
 ngx_http_length_hiding_header_filter(ngx_http_request_t *r)
@@ -93,7 +102,8 @@ ngx_http_length_hiding_header_filter(ngx_http_request_t *r)
     cf = ngx_http_get_module_loc_conf(r, ngx_http_length_hiding_filter_module);
 
     if(!cf->enable
-        || ( r->headers_out.status != NGX_HTTP_OK || r->headers_out.status == NGX_HTTP_NO_CONTENT )
+        || ( r->headers_out.status != NGX_HTTP_OK
+             || r->headers_out.status == NGX_HTTP_NO_CONTENT )
         || r->header_only
         || (r->method & NGX_HTTP_HEAD)
         || r != r->main
@@ -107,12 +117,15 @@ ngx_http_length_hiding_header_filter(ngx_http_request_t *r)
         return NGX_ERROR;
     }
 
-    /* generate random string comment to make it difficult for attackers to detect size change during BREACH attach */
+    /*
+     * generate random string comment to make it difficult for attackers to 
+     * detect size change during BREACH attach
+     * */
     if( ngx_http_length_hiding_generate_random(r, ctx, cf) != NGX_OK ){
         return NGX_ERROR;
     }
 
-    ngx_http_set_ctx(r, ctx, ngx_http_length_hiding_filter_module);    
+    ngx_http_set_ctx(r, ctx, ngx_http_length_hiding_filter_module);
 
     if (r->headers_out.content_length_n != -1) {
         r->headers_out.content_length_n += ctx->comment.len;
@@ -128,12 +141,13 @@ ngx_http_length_hiding_header_filter(ngx_http_request_t *r)
     return ngx_http_next_header_filter(r);
 }
 
+
 static ngx_int_t
 ngx_http_length_hiding_body_filter(ngx_http_request_t *r, ngx_chain_t *in)
 {
     ngx_buf_t                      *buf;
     ngx_uint_t                     last;
-    ngx_chain_t                    *cl, *nl;    
+    ngx_chain_t                    *cl, *nl;
     ngx_http_length_hiding_ctx_t   *ctx;
 
     ctx = ngx_http_get_module_ctx(r, ngx_http_length_hiding_filter_module);
@@ -142,7 +156,9 @@ ngx_http_length_hiding_body_filter(ngx_http_request_t *r, ngx_chain_t *in)
         return ngx_http_next_body_filter(r, in);
     }
 
-    ngx_log_debug1(NGX_LOG_DEBUG_HTTP, r->connection->log, 0, "http length hiding filter : random length %d", ctx->comment.len);
+    ngx_log_debug1(NGX_LOG_DEBUG_HTTP, r->connection->log, 0,
+                   "http length hiding filter : random length %d",
+                   ctx->comment.len);
 
     last = 0;
     for (cl = in; cl; cl = cl->next) {
@@ -179,10 +195,11 @@ ngx_http_length_hiding_body_filter(ngx_http_request_t *r, ngx_chain_t *in)
         nl->next = NULL;
         cl->next = nl;
         cl->buf->last_buf = 0;
-    }    
+    }
 
     return ngx_http_next_body_filter(r, in);
 }
+
 
 static void *
 ngx_http_length_hiding_create_conf(ngx_conf_t *cf)
@@ -193,12 +210,13 @@ ngx_http_length_hiding_create_conf(ngx_conf_t *cf)
     if (conf == NULL) {
         return NGX_CONF_ERROR;
     }
-    
+
     conf->enable = NGX_CONF_UNSET;
     conf->max = NGX_CONF_UNSET;
 
     return conf;
 }
+
 
 static char *
 ngx_http_length_hiding_merge_conf(ngx_conf_t *cf, void *parent, void *child){
@@ -217,6 +235,7 @@ ngx_http_length_hiding_merge_conf(ngx_conf_t *cf, void *parent, void *child){
     return NGX_CONF_OK;
 }
 
+
 static ngx_int_t
 ngx_http_length_hiding_filter_init(ngx_conf_t *cf)
 {
@@ -229,9 +248,10 @@ ngx_http_length_hiding_filter_init(ngx_conf_t *cf)
     return NGX_OK;
 }
 
+
 static ngx_int_t
-ngx_http_length_hiding_generate_random(ngx_http_request_t *r, ngx_http_length_hiding_ctx_t *ctx,
-    ngx_http_length_hiding_conf_t *cf)
+ngx_http_length_hiding_generate_random(ngx_http_request_t *r,
+    ngx_http_length_hiding_ctx_t *ctx, ngx_http_length_hiding_conf_t *cf)
 {
 
     u_int          len;
@@ -242,7 +262,8 @@ ngx_http_length_hiding_generate_random(ngx_http_request_t *r, ngx_http_length_hi
 
     len = ngx_random() % cf->max + 1;
 
-    ngx_log_debug1(NGX_LOG_DEBUG_HTTP, r->connection->log, 0, "http length hiding filter : length %d", len);
+    ngx_log_debug1(NGX_LOG_DEBUG_HTTP, r->connection->log, 0,
+                   "http length hiding filter : length %d", len);
 
     s = d = ngx_palloc(r->pool, len + 37);
     if( s == NULL ){
@@ -256,10 +277,10 @@ ngx_http_length_hiding_generate_random(ngx_http_request_t *r, ngx_http_length_hi
     }
     s = ngx_copy(s, " -->", 4);
 
-    ngx_log_debug1(NGX_LOG_DEBUG_HTTP, r->connection->log, 0, "http length hiding filter : str %s", d);    
+    ngx_log_debug1(NGX_LOG_DEBUG_HTTP, r->connection->log, 0,
+                   "http length hiding filter : str %s", d);
     ctx->comment.data = d;
     ctx->comment.len = s - d;
 
     return NGX_OK;
 }
-
