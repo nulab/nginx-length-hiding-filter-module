@@ -31,7 +31,10 @@ As said in breach-migration-rails, BREACH is complicated and wide-ranging attack
 
 ## Installation
 
-This filter module is tested with nginx 1.2.9, 1.4.7, 1.6.1, 1.9.12 and 1.10.0.
+Module version | Nginx version
+--- | ---
+1.1.x | 1.10.1 or higher
+1.0.0 | 1.10.0 or earlier
 
 Download nginx sources from [http://nginx.org](http://nginx.org) and unpack it.
 
@@ -60,7 +63,7 @@ sudo make install
 
 Enables or disables adding random generated HTML comment.
 
-### length_hiding_max 
+### length_hiding_max
 
 * syntax: length_hiding_max size
 * default: 2048
