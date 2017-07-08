@@ -102,8 +102,7 @@ ngx_http_length_hiding_header_filter(ngx_http_request_t *r)
     cf = ngx_http_get_module_loc_conf(r, ngx_http_length_hiding_filter_module);
 
     if(!cf->enable
-        || ( r->headers_out.status != NGX_HTTP_OK
-             || r->headers_out.status == NGX_HTTP_NO_CONTENT )
+        || r->headers_out.status == NGX_HTTP_NO_CONTENT
         || r->header_only
         || (r->method & NGX_HTTP_HEAD)
         || r != r->main
