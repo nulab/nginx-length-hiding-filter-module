@@ -1,6 +1,8 @@
 
 # Nginx Length Hiding Filter Module
 
+[![Build Status](https://travis-ci.org/nulab/nginx-length-hiding-filter-module.svg?branch=master)](https://travis-ci.org/nulab/nginx-length-hiding-filter-module)
+
 ## Introduction
 
 In [BREACH site](http://breachattack.com/), the mitigations against BREACH attack are given as follows:
