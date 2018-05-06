@@ -1,6 +1,6 @@
 FROM perl:latest
 
-ENV NGINX_VERSION 1.12.2
+ENV NGINX_VERSION 1.14.0
 
 RUN cpanm Test::Harness
 RUN cpanm Test::Nginx
