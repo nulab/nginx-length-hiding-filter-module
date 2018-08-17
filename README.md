@@ -78,7 +78,7 @@ Sets maximum length of random generated string used in HTML comment. The size sh
 Enable this module for specific location ('/hiding'). In this example, the length of random strings will be less than 1024.
 ```
 server {
-    listen       443 default_server deferred ssl spdy;
+    listen       443 default_server deferred ssl http2;
     server_name  example.com;
     length_hiding_max 1024;
 
