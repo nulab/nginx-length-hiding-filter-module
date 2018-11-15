@@ -73,6 +73,14 @@ Enables or disables adding random generated HTML comment.
 
 Sets maximum length of random generated string used in HTML comment. The size should be within a range from 256 and 2048.
 
+### length_hiding_types
+
+* syntax: length_hiding_types <mime_type> [..]
+* default: text/html
+* context: http, server, location, if in location
+
+Enables adding random generated HTML comment to responses of the specified MIME types in addition to text/html. The special value * matches any MIME type. 
+
 ## Example Configuration
 
 Enable this module for specific location ('/hiding'). In this example, the length of random strings will be less than 1024.
